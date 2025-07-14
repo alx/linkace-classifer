@@ -26,12 +26,14 @@ def test_linkace_api():
             print("⚠️  config.json not found (expected in CI) - using sample config")
             config_data = {
                 "linkace_api_url": "https://your-linkace-instance.com/api/v2",
-                "linkace_api_token": "sample_token"
+                "linkace_api_token": "sample_token",
             }
 
         # Skip if using default placeholder values
         if "your-linkace-instance.com" in config_data["linkace_api_url"]:
-            print("⚠️  Skipping LinkAce API test - using placeholder URL (expected in CI)")
+            print(
+                "⚠️  Skipping LinkAce API test - using placeholder URL (expected in CI)"
+            )
             return True  # Don't fail CI for missing config
 
         client = LinkAceClient(
@@ -123,7 +125,7 @@ def test_config_manager():
                 "linkace_api_url": "https://your-linkace-instance.com/api/v2",
                 "linkace_api_token": "sample_token",
                 "input_list_id": 1,
-                "classify_list_ids": [1, 2, 3]
+                "classify_list_ids": [1, 2, 3],
             }
             print("✅ Using sample configuration for testing")
 
