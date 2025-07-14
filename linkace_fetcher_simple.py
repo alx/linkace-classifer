@@ -19,7 +19,7 @@ from typing import List, Dict, Any
 # ============================================================================
 
 # Your LinkAce API base URL (replace with your actual LinkAce instance URL)
-API_BASE_URL = "https://shared.girard-davila.net/api/v2"
+API_BASE_URL = "https://your-linkace-instance.com/api/v2"
 
 # Your API token (get this from your LinkAce user settings)
 API_TOKEN = "YOUR_API_TOKEN_HERE"
