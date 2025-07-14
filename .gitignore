@@ -69,3 +69,8 @@ tmp/
 *.bak
 *.swp
 *.swo
+
+# Claude Code specific files
+CLAUDE.md
+SUMMARY.md
+plan.md
