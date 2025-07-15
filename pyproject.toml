@@ -1,0 +1,111 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "linkace-classifier"
+version = "1.0.0"
+description = "AI-powered URL classification for LinkAce"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "LinkAce Classifier Team", email = "linkace-classifier@example.com"}
+]
+maintainers = [
+    {name = "LinkAce Classifier Team", email = "linkace-classifier@example.com"}
+]
+keywords = ["linkace", "url", "classification", "ai", "ollama", "api"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers", 
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9", 
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Linguistic",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.28.0",
+    "urllib3>=1.26.0",
+    "Flask>=2.3.0",
+    "Flask-CORS>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=22.0.0", 
+    "flake8>=5.0.0",
+]
+ml = [
+    "pandas>=1.5.0",
+    "scikit-learn>=1.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/alx/linkace-classifier"
+Documentation = "https://github.com/alx/linkace-classifier/blob/main/docs/"
+Repository = "https://github.com/alx/linkace-classifier.git"
+"Bug Tracker" = "https://github.com/alx/linkace-classifier/issues"
+
+[project.scripts]
+linkace-classifier = "linkace_classifier.cli.main:main"
+linkace-classifier-server = "linkace_classifier.cli.server_main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+linkace_classifier = ["*.md", "*.txt"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "docs/source/conf.py",
+    "old",
+    "build",
+    "dist",
+    ".eggs",
+    "*.egg",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+markers = [
+    "integration: marks tests as integration tests (deselect with '-m \"not integration\"')",
+    "unit: marks tests as unit tests",
+]
