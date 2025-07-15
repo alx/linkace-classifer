@@ -8,7 +8,6 @@ Main entry point for starting the HTTP API server
 import sys
 import signal
 import argparse
-from typing import Optional
 
 from ..core.config import ConfigManager, ClassifierConfig
 from ..http.server import ClassificationAPIServer
@@ -31,58 +30,40 @@ Examples:
   %(prog)s --config config.json
   %(prog)s --host 0.0.0.0 --port 8080
   %(prog)s --config config.json --host 0.0.0.0 --port 8080 --debug
-        """
+        """,
     )
 
     # Configuration
-    parser.add_argument(
-        "--config", 
-        help="Configuration file path (JSON format)"
-    )
+    parser.add_argument("--config", help="Configuration file path (JSON format)")
 
     # Server settings
     parser.add_argument(
-        "--host",
-        default="localhost",
-        help="Server host address (default: localhost)"
+        "--host", default="localhost", help="Server host address (default: localhost)"
     )
     parser.add_argument(
-        "--port",
-        type=int,
-        default=5000,
-        help="Server port number (default: 5000)"
+        "--port", type=int, default=5000, help="Server port number (default: 5000)"
     )
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Enable debug mode"
-    )
+    parser.add_argument("--debug", action="store_true", help="Enable debug mode")
 
     # LinkAce API settings
-    parser.add_argument(
-        "--api-url",
-        help="LinkAce API base URL"
-    )
-    parser.add_argument(
-        "--api-token",
-        help="LinkAce API token"
-    )
+    parser.add_argument("--api-url", help="LinkAce API base URL")
+    parser.add_argument("--api-token", help="LinkAce API token")
     parser.add_argument(
         "--classify-lists",
         type=lambda x: [int(i.strip()) for i in x.split(",")],
-        help="Comma-separated list of classification list IDs"
+        help="Comma-separated list of classification list IDs",
     )
 
     # Ollama settings
     parser.add_argument(
         "--ollama-url",
         default="http://localhost:11434",
-        help="Ollama server URL (default: http://localhost:11434)"
+        help="Ollama server URL (default: http://localhost:11434)",
     )
     parser.add_argument(
         "--ollama-model",
         default="llama3.2",
-        help="Ollama model to use (default: llama3.2)"
+        help="Ollama model to use (default: llama3.2)",
     )
 
     # Other settings
@@ -90,22 +71,12 @@ Examples:
         "--confidence-threshold",
         type=float,
         default=0.8,
-        help="Confidence threshold for classification (default: 0.8)"
+        help="Confidence threshold for classification (default: 0.8)",
     )
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
+    parser.add_argument("--no-cors", action="store_true", help="Disable CORS support")
     parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Enable verbose output"
-    )
-    parser.add_argument(
-        "--no-cors",
-        action="store_true",
-        help="Disable CORS support"
-    )
-    parser.add_argument(
-        "--no-url-validation",
-        action="store_true",
-        help="Disable URL validation"
+        "--no-url-validation", action="store_true", help="Disable URL validation"
     )
 
     return parser.parse_args()
@@ -114,7 +85,7 @@ Examples:
 def create_config_from_args(args) -> ClassifierConfig:
     """Create configuration from command-line arguments"""
     config_manager = ConfigManager()
-    
+
     # Start with defaults
     config_dict = {
         "server_host": args.host,
@@ -130,7 +101,7 @@ def create_config_from_args(args) -> ClassifierConfig:
         "dry_run": False,
         "enable_accessibility_check": False,
         "request_timeout": 30.0,
-        "max_requests_per_minute": 60
+        "max_requests_per_minute": 60,
     }
 
     # Load from configuration file if provided
@@ -151,11 +122,7 @@ def create_config_from_args(args) -> ClassifierConfig:
         config_dict["classify_list_ids"] = args.classify_lists
 
     # Validate required fields for API server
-    required_fields = [
-        "linkace_api_url",
-        "linkace_api_token", 
-        "classify_list_ids"
-    ]
+    required_fields = ["linkace_api_url", "linkace_api_token", "classify_list_ids"]
 
     missing_fields = []
     for field in required_fields:
@@ -169,7 +136,9 @@ def create_config_from_args(args) -> ClassifierConfig:
         print("\nProvide these via:")
         print("  - Command-line arguments (--api-url, --api-token, --classify-lists)")
         print("  - Configuration file (--config config.json)")
-        print("  - Environment variables (LINKACE_API_URL, LINKACE_API_TOKEN, CLASSIFY_LIST_IDS)")
+        print(
+            "  - Environment variables (LINKACE_API_URL, LINKACE_API_TOKEN, CLASSIFY_LIST_IDS)"
+        )
         sys.exit(1)
 
     # Validate URL format
@@ -178,7 +147,10 @@ def create_config_from_args(args) -> ClassifierConfig:
         sys.exit(1)
 
     # Validate lists
-    if not isinstance(config_dict["classify_list_ids"], list) or len(config_dict["classify_list_ids"]) == 0:
+    if (
+        not isinstance(config_dict["classify_list_ids"], list)
+        or len(config_dict["classify_list_ids"]) == 0
+    ):
         print("❌ classify_list_ids must be a non-empty list")
         sys.exit(1)
 
@@ -193,9 +165,9 @@ def test_services(config: ClassifierConfig) -> bool:
     """Test connectivity to external services"""
     from ..api.linkace import LinkAceClient
     from ..api.ollama import OllamaClient
-    
+
     print("🔍 Testing service connectivity...")
-    
+
     # Test LinkAce API
     try:
         linkace_client = LinkAceClient(config.linkace_api_url, config.linkace_api_token)
@@ -207,7 +179,7 @@ def test_services(config: ClassifierConfig) -> bool:
     except Exception as e:
         print(f"❌ LinkAce API error: {e}")
         return False
-    
+
     # Test Ollama
     try:
         ollama_client = OllamaClient(config.ollama_url, config.ollama_model)
@@ -219,7 +191,7 @@ def test_services(config: ClassifierConfig) -> bool:
     except Exception as e:
         print(f"❌ Ollama server error: {e}")
         return False
-    
+
     print("✅ All service connections successful")
     return True
 
@@ -242,7 +214,9 @@ def print_server_info(config: ClassifierConfig):
     print(f"  GET    http://{config.server_host}:{config.server_port}/summary")
     print(f"  GET    http://{config.server_host}:{config.server_port}/health")
     print("\n💡 Example Request:")
-    print(f'  curl -X POST http://{config.server_host}:{config.server_port}/classify \\')
+    print(
+        f"  curl -X POST http://{config.server_host}:{config.server_port}/classify \\"
+    )
     print('    -H "Content-Type: application/json" \\')
     print('    -d \'{"url": "https://github.com/user/repo"}\'')
     print("\n" + "=" * 60)
@@ -253,36 +227,38 @@ def main():
     # Set up signal handlers
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-    
+
     # Parse command-line arguments
     args = parse_arguments()
-    
+
     try:
         # Create configuration
         config = create_config_from_args(args)
-        
+
         # Print configuration if verbose
         if config.verbose:
             print_server_info(config)
-        
+
         # Test service connectivity
         if not test_services(config):
             print("\n❌ Service connectivity tests failed")
-            print("Please check your configuration and ensure all services are running:")
+            print(
+                "Please check your configuration and ensure all services are running:"
+            )
             print(f"  - LinkAce API: {config.linkace_api_url}")
             print(f"  - Ollama server: {config.ollama_url}")
             sys.exit(1)
-        
+
         # Create and start server
         log_message("Initializing API server...", "INFO")
         server = ClassificationAPIServer(config)
-        
+
         if not config.verbose:
             print_server_info(config)
-        
+
         print(f"\n🎉 Server starting... Press Ctrl+C to stop")
         server.run()
-        
+
     except KeyboardInterrupt:
         log_message("Server stopped by user", "INFO")
     except Exception as e:

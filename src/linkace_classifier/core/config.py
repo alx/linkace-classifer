@@ -42,13 +42,13 @@ class ClassifierConfig:
     # Output settings
     log_level: str = "INFO"
     output_file: Optional[str] = None
-    
+
     # HTTP Server settings
     server_host: str = "localhost"
     server_port: int = 5000
     server_debug: bool = False
     enable_cors: bool = True
-    
+
     # API settings
     enable_url_validation: bool = True
     enable_accessibility_check: bool = False
@@ -95,16 +95,24 @@ class ConfigManager:
             config["dry_run"] = os.getenv("DRY_RUN").lower() in ("true", "1", "yes")
         if os.getenv("VERBOSE"):
             config["verbose"] = os.getenv("VERBOSE").lower() in ("true", "1", "yes")
-            
+
         # HTTP Server settings
         if os.getenv("SERVER_HOST"):
             config["server_host"] = os.getenv("SERVER_HOST")
         if os.getenv("SERVER_PORT"):
             config["server_port"] = int(os.getenv("SERVER_PORT"))
         if os.getenv("SERVER_DEBUG"):
-            config["server_debug"] = os.getenv("SERVER_DEBUG").lower() in ("true", "1", "yes")
+            config["server_debug"] = os.getenv("SERVER_DEBUG").lower() in (
+                "true",
+                "1",
+                "yes",
+            )
         if os.getenv("ENABLE_CORS"):
-            config["enable_cors"] = os.getenv("ENABLE_CORS").lower() in ("true", "1", "yes")
+            config["enable_cors"] = os.getenv("ENABLE_CORS").lower() in (
+                "true",
+                "1",
+                "yes",
+            )
 
         return config
 
@@ -304,14 +312,14 @@ def create_sample_config_file():
         "enable_url_validation": True,
         "enable_accessibility_check": False,
         "request_timeout": 30.0,
-        "max_requests_per_minute": 60
+        "max_requests_per_minute": 60,
     }
 
     import os
-    
+
     # Create configs directory if it doesn't exist
     os.makedirs("configs", exist_ok=True)
-    
+
     with open("configs/config.json", "w") as f:
         json.dump(sample_config, f, indent=2)
 

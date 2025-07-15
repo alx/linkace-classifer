@@ -14,7 +14,7 @@ from .core.utils import log_message
 
 __all__ = [
     "ClassifierConfig",
-    "ConfigManager", 
+    "ConfigManager",
     "log_message",
     "__version__",
 ]

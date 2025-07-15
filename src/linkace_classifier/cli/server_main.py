@@ -16,7 +16,7 @@ if __name__ == "__main__":
     src_dir = os.path.dirname(os.path.dirname(script_dir))
     # Add to Python path
     sys.path.insert(0, src_dir)
-    
+
     from linkace_classifier.cli.server import main as server_main
 else:
     from .server import main as server_main

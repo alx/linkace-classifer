@@ -10,7 +10,7 @@ import json
 import os
 
 # Add src to path for testing
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from linkace_classifier.api.linkace import LinkAceClient
 from linkace_classifier.api.ollama import OllamaClient

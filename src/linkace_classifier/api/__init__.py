@@ -8,6 +8,6 @@ from .linkace import LinkAceClient
 from .ollama import OllamaClient
 
 __all__ = [
-    "LinkAceClient", 
+    "LinkAceClient",
     "OllamaClient",
 ]
