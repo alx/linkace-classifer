@@ -7,9 +7,14 @@ Tests the various components and functionality
 
 import sys
 import json
-from linkace_api import LinkAceClient
-from ollama_client import OllamaClient
-from config import ConfigManager
+import os
+
+# Add the src directory to Python path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+
+from linkace_classifier.api.linkace import LinkAceClient
+from linkace_classifier.api.ollama import OllamaClient
+from linkace_classifier.core.config import ConfigManager
 
 
 def test_linkace_api():
@@ -173,10 +178,10 @@ def test_import_modules():
     print("Testing module imports...")
 
     try:
-        from linkace_api import LinkAceClient  # noqa: F401
-        from ollama_client import OllamaClient  # noqa: F401
-        from config import ConfigManager  # noqa: F401
-        from utils import log_message  # noqa: F401
+        from linkace_classifier.api.linkace import LinkAceClient  # noqa: F401
+        from linkace_classifier.api.ollama import OllamaClient  # noqa: F401
+        from linkace_classifier.core.config import ConfigManager  # noqa: F401
+        from linkace_classifier.core.utils import log_message  # noqa: F401
 
         print("✅ All modules imported successfully")
         return True
