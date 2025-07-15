@@ -28,27 +28,36 @@ jobs:
     
     - name: Run basic tests
       run: |
-        python test_classifier.py
+        python tests/test_core.py
     
     - name: Test module imports
       run: |
-        python -c "from linkace_api import LinkAceClient; print('LinkAce API module OK')"
-        python -c "from ollama_client import OllamaClient; print('Ollama client module OK')"
-        python -c "from config import ConfigManager; print('Config module OK')"
-        python -c "from utils import log_message; print('Utils module OK')"
+        python -c "import sys; sys.path.insert(0, 'src'); from linkace_classifier.api.linkace import LinkAceClient; print('LinkAce API module OK')"
+        python -c "import sys; sys.path.insert(0, 'src'); from linkace_classifier.api.ollama import OllamaClient; print('Ollama client module OK')"
+        python -c "import sys; sys.path.insert(0, 'src'); from linkace_classifier.core.config import ConfigManager; print('Config module OK')"
+        python -c "import sys; sys.path.insert(0, 'src'); from linkace_classifier.core.utils import log_message; print('Utils module OK')"
     
     - name: Test configuration generation
       run: |
-        python config.py
-        test -f config.json
+        python src/linkace_classifier/core/config.py
+        test -f configs/config.json
     
     - name: Validate Python syntax
       run: |
-        python -m py_compile linkace_classifier.py
-        python -m py_compile linkace_api.py
-        python -m py_compile ollama_client.py
-        python -m py_compile config.py
-        python -m py_compile utils.py
+        python -m py_compile src/linkace_classifier/core/classifier.py
+        python -m py_compile src/linkace_classifier/api/linkace.py
+        python -m py_compile src/linkace_classifier/api/ollama.py
+        python -m py_compile src/linkace_classifier/core/config.py
+        python -m py_compile src/linkace_classifier/core/utils.py
+        python -m py_compile src/linkace_classifier/http/server.py
+        python -m py_compile src/linkace_classifier/cli/main.py
+        python -m py_compile src/linkace_classifier/cli/server.py
+    
+    - name: Test package installation
+      run: |
+        pip install .
+        linkace-classifier --help
+        linkace-classifier-server --help
 
   lint:
     runs-on: ubuntu-latest
@@ -68,13 +77,13 @@ jobs:
     - name: Lint with flake8
       run: |
         # Stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+        flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
     
     - name: Check formatting with black
       run: |
-        black --check --diff .
+        black --check --diff src/ tests/
 
   security:
     runs-on: ubuntu-latest
@@ -93,8 +102,8 @@ jobs:
     
     - name: Run bandit security scan
       run: |
-        bandit -r . -f json -o bandit-report.json || true
-        bandit -r . || true
+        bandit -r src/ -f json -o bandit-report.json || true
+        bandit -r src/ || true
     
     - name: Check for known security vulnerabilities
       run: |

@@ -307,10 +307,15 @@ def create_sample_config_file():
         "max_requests_per_minute": 60
     }
 
-    with open("config.json", "w") as f:
+    import os
+    
+    # Create configs directory if it doesn't exist
+    os.makedirs("configs", exist_ok=True)
+    
+    with open("configs/config.json", "w") as f:
         json.dump(sample_config, f, indent=2)
 
-    print("✅ Sample configuration file created as config.json")
+    print("✅ Sample configuration file created as configs/config.json")
     print("Edit this file with your actual settings before running the classifier.")
 
 

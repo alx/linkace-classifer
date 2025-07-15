@@ -2,7 +2,7 @@
 
 > AI-powered automatic link classification for LinkAce using Ollama
 
-[![Python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![LinkAce](https://img.shields.io/badge/LinkAce-v2.1+-orange.svg)](https://www.linkace.org/)
 [![Ollama](https://img.shields.io/badge/Ollama-compatible-purple.svg)](https://ollama.ai/)
@@ -24,22 +24,30 @@ Automatically classify links from a LinkAce input list into appropriate classifi
 
 ### Prerequisites
 
-- Python 3.7+
+- Python 3.8+
 - LinkAce instance with API access
 - Ollama server running locally or remotely
 
 ### Installation
 
+#### Option 1: Install from source
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/alx/linkace-classifier.git
    cd linkace-classifier
    ```
 
-2. **Install dependencies**:
+2. **Install the package**:
    ```bash
-   pip install -r requirements.txt
+   pip install .
    ```
+
+#### Option 2: Development installation
+```bash
+git clone https://github.com/alx/linkace-classifier.git
+cd linkace-classifier
+pip install -e .
+```
 
 3. **Set up Ollama**:
    ```bash
@@ -56,7 +64,7 @@ Automatically classify links from a LinkAce input list into appropriate classifi
 ### Basic Usage
 
 ```bash
-python linkace_classifier.py \
+linkace-classifier \
   --api-url https://your-linkace.com/api/v2 \
   --token YOUR_API_TOKEN \
   --input-list 12 \
@@ -66,7 +74,7 @@ python linkace_classifier.py \
 ### Test with Dry Run
 
 ```bash
-python linkace_classifier.py \
+linkace-classifier \
   --api-url https://your-linkace.com/api/v2 \
   --token YOUR_API_TOKEN \
   --input-list 12 \
@@ -106,7 +114,7 @@ python linkace_classifier.py \
 
 ### Configuration File
 
-Create a `config.json` file:
+Create a `configs/config.json` file:
 
 ```json
 {
@@ -124,7 +132,7 @@ Create a `config.json` file:
 
 Generate a sample configuration:
 ```bash
-python config.py
+python src/linkace_classifier/core/config.py
 ```
 
 ### Environment Variables
@@ -158,12 +166,12 @@ The classifier uses these LinkAce API v2.1+ endpoints:
 
 Run the comprehensive test suite:
 ```bash
-python test_classifier.py
+python tests/test_core.py
 ```
 
 Run the demo with existing CSV data:
 ```bash
-python demo_classifier.py
+python scripts/demo_classifier.py
 ```
 
 ## 📊 Example Output
@@ -201,7 +209,7 @@ Confidence statistics:
 ### Custom Ollama Models
 
 ```bash
-python linkace_classifier.py \
+linkace-classifier \
   --ollama-model llama3.1:70b \
   --ollama-url http://localhost:11434 \
   [other options]
@@ -210,7 +218,7 @@ python linkace_classifier.py \
 ### Batch Processing with Custom Threshold
 
 ```bash
-python linkace_classifier.py \
+linkace-classifier \
   --confidence-threshold 0.7 \
   --output-file results.csv \
   --verbose \
@@ -220,7 +228,21 @@ python linkace_classifier.py \
 ### Configuration File Usage
 
 ```bash
-python linkace_classifier.py --config production.json
+linkace-classifier --config configs/config.json
+```
+
+### HTTP API Server
+
+Start the HTTP API server:
+```bash
+linkace-classifier-server --config configs/config.json --host 0.0.0.0 --port 8080
+```
+
+Make classification requests:
+```bash
+curl -X POST http://localhost:8080/classify \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://github.com/user/repo"}'
 ```
 
 ## 🛡️ Security Considerations
@@ -291,23 +313,34 @@ The classifier works with any Ollama model, but these are recommended:
 
 Enable detailed logging:
 ```bash
-python linkace_classifier.py --verbose [other options]
+linkace-classifier --verbose [other options]
 ```
 
 ## 📁 Project Structure
 
 ```
 linkace-classifier/
-├── linkace_classifier.py    # Main executable script
-├── linkace_api.py           # LinkAce API wrapper
-├── ollama_client.py         # Ollama integration
-├── config.py                # Configuration management
-├── utils.py                 # Utility functions
-├── requirements.txt         # Python dependencies
-├── config.json             # Sample configuration
-├── test_classifier.py      # Test suite
-├── demo_classifier.py      # Demo script
-└── README.md              # This file
+├── README.md                    # Project documentation
+├── LICENSE                      # License file
+├── requirements.txt             # Python dependencies
+├── setup.py                     # Package setup
+├── pyproject.toml              # Modern Python packaging
+├── Dockerfile                   # Container setup
+├── docker-compose.yml          # Container orchestration
+├── src/
+│   └── linkace_classifier/     # Main package
+│       ├── __init__.py         # Package initialization
+│       ├── core/               # Configuration, utilities, classifier
+│       ├── api/                # LinkAce & Ollama clients
+│       ├── http/               # Flask server
+│       ├── cli/                # Command-line interfaces
+│       ├── services/           # Classification service
+│       └── validation/         # URL validation
+├── tests/                      # Test files
+├── configs/                    # Configuration files
+├── scripts/                    # Demo and legacy scripts
+├── docs/                       # Documentation
+└── examples/                   # Usage examples
 ```
 
 ## 🤝 Contributing
@@ -320,7 +353,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 2. Create a feature branch: `git checkout -b feature-name`
 3. Make your changes
 4. Add tests for new functionality
-5. Ensure all tests pass: `python test_classifier.py`
+5. Ensure all tests pass: `python tests/test_core.py`
 6. Submit a pull request
 
 ### Reporting Issues
