@@ -1,7 +1,7 @@
 # LinkAce Classifier Dependencies
 
 # Core dependencies
-requests>=2.25.0
+requests>=2.28.0
 urllib3>=1.26.0
 
 # HTTP API Server dependencies
