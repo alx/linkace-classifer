@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: linkace-classifier-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  linkace-classifier:
+    build: .
+    container_name: linkace-classifier
+    depends_on:
+      - ollama
+    volumes:
+      - ./configs/config.json:/app/configs/config.json:ro
+      - ./results:/app/results
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+    command: python src/linkace_classifier/cli/main.py --config configs/config.json
+    restart: "no"
+
+volumes:
+  ollama_data:
